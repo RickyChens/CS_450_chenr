@@ -81,8 +81,14 @@ target_link_libraries(Assign01 ${ALL_LIBRARIES})
 install(TARGETS Assign01 RUNTIME DESTINATION bin/Assign01)
 install(DIRECTORY shaders/Assign01 DESTINATION bin/Assign01/shaders)
 
-# Assign 02
+# Assign02
 add_executable(Assign02 ${GENERAL_SOURCES} "./src/app/Assign02.cpp")
 target_link_libraries(Assign02 ${ALL_LIBRARIES})
 install(TARGETS Assign02 RUNTIME DESTINATION bin/Assign02)
 install(DIRECTORY shaders/Assign02 DESTINATION bin/Assign02/shaders)
+
+# Assign03
+add_executable(Assign03 ${GENERAL_SOURCES} "./src/app/Assign03.cpp")
+target_link_libraries(Assign03 ${ALL_LIBRARIES})
+install(TARGETS Assign03 RUNTIME DESTINATION bin/Assign03)
+install(DIRECTORY shaders/Assign03 DESTINATION bin/Assign03/shaders)
