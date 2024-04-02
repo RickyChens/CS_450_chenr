@@ -30,6 +30,73 @@ struct PointLight {
 
 PointLight light;
 
+struct FBO {
+    unsigned int ID;
+    int width;
+    int height;
+    vector<unsigned int> colorIDs;
+    unsigned int depthRBO;
+
+    void clear() {
+        ID = 0;
+        width = 0;
+        height = 0;
+        colorIDs.clear();
+        depthRBO = 0;
+    };
+};
+
+unsigned int createColorAttachment(
+    int width, int height, 
+    int internal,
+    int format, int type, 
+    int texFilter, int colorAttach) {
+
+    unsigned int texID = 0;
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexImage2D(GL_TEXTURE_2D, 0, internal, width, height, 0,
+                        format, type, 0);
+        
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texFilter);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach,
+                            GL_TEXTURE_2D, texID, 0);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return texID;
+}
+
+unsigned int createDepthRBO(int width, int height) {
+    unsigned int rbo = 0;
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                                    GL_RENDERBUFFER, rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    return rbo;
+}
+
+void createFBO(FBO &fboObj, int width, int height) {
+    fboObj.clear();
+    glGenFramebuffers(1, &(fboObj.ID));
+    fboObj.width = width;
+    fboObj.height = height;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboObj.ID);
+    fboObj.colorIDs.push_back(createColorAttachment(width, height,
+                                            GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
+                                            GL_LINEAR, 0));
+    fboObj.depthRBO = createDepthRBO(width, height);
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        cerr << "ERROR: Incomplete FBO!" << endl;
+        fboObj.clear();
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);                                            
+}
+
 static void mouse_button_callback(GLFWwindow *window, int button,
                                     int action, int mods) {
     if(action == GLFW_PRESS) {
@@ -279,6 +346,35 @@ unsigned int loadAndCreateTexture(string filename) {
     return texID;
 }
 
+GLuint loadAndCreateShaderProgram(string vertFile, string fragFile) {
+    
+    string vertCode = readFileToString(vertFile);
+	string fragCode = readFileToString(fragFile);
+    cout << vertCode << endl;
+    cout << fragCode << endl;
+
+    GLuint vertID = glCreateShader(GL_VERTEX_SHADER);
+    GLuint fragID = glCreateShader(GL_FRAGMENT_SHADER);
+
+    const char *vertPtr = vertCode.c_str();
+    const char *fragPtr = fragCode.c_str();
+    glShaderSource(vertID, 1, &vertPtr, NULL);
+    glShaderSource(fragID, 1, &fragPtr, NULL);
+
+    glCompileShader(vertID);
+    glCompileShader(fragID);
+
+    GLuint progID = glCreateProgram();
+    glAttachShader(progID, vertID);
+    glAttachShader(progID, fragID);
+    glLinkProgram(progID);
+
+    glDeleteShader(vertID);
+    glDeleteShader(fragID);
+
+    return progID;
+}
+
 int main(int argc, char **argv) {
     cout << "BEGIN OPENGL ADVENTURE!" << endl;
 
@@ -355,29 +451,11 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    string vertCode = readFileToString("./shaders/ProfExercises/Simple.vs");
-	string fragCode = readFileToString("./shaders/ProfExercises/Simple.fs");
-    cout << vertCode << endl;
-    cout << fragCode << endl;
+    GLuint progID = loadAndCreateShaderProgram("./shaders/ProfFBOExercises/Simple.vs",
+                                                "./shaders/ProfFBOExercises/Simple.fs");
 
-    GLuint vertID = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fragID = glCreateShader(GL_FRAGMENT_SHADER);
-
-    const char *vertPtr = vertCode.c_str();
-    const char *fragPtr = fragCode.c_str();
-    glShaderSource(vertID, 1, &vertPtr, NULL);
-    glShaderSource(fragID, 1, &fragPtr, NULL);
-
-    glCompileShader(vertID);
-    glCompileShader(fragID);
-
-    GLuint progID = glCreateProgram();
-    glAttachShader(progID, vertID);
-    glAttachShader(progID, fragID);
-    glLinkProgram(progID);
-
-    glDeleteShader(vertID);
-    glDeleteShader(fragID);
+    GLuint quadProgID = loadAndCreateShaderProgram("./shaders/ProfFBOExercises/Quad.vs",
+                                                "./shaders/ProfFBOExercises/Quad.fs");
 
     GLint modelMatLoc = glGetUniformLocation(progID, "modelMat");
     GLint viewMatLoc = glGetUniformLocation(progID, "viewMat");
@@ -389,6 +467,10 @@ int main(int argc, char **argv) {
     cout << "normalMatLoc: " << normalMatLoc << endl;
     GLint lightPosLoc = glGetUniformLocation(progID, "light.pos");
     GLint lightColorLoc = glGetUniformLocation(progID, "light.color");
+
+    glfwGetFramebufferSize(window, &frameWidth, &frameHeight);
+    FBO fbo;
+    createFBO(fbo, frameWidth, frameHeight);
 
     unsigned int diffTexID = loadAndCreateTexture("test.png");
     unsigned int normTexID = loadAndCreateTexture("normal.png");
@@ -501,6 +583,9 @@ int main(int argc, char **argv) {
     light.pos = glm::vec4(0, 20, 0, 1.0);
 
     while(!glfwWindowShouldClose(window)) {
+
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo.ID);
+
         glfwGetFramebufferSize(window, &frameWidth, &frameHeight);
         float aspect = 1.0f;
         if(frameHeight > 0) {
@@ -540,6 +625,8 @@ int main(int argc, char **argv) {
         glfwPollEvents();
         this_thread::sleep_for(chrono::milliseconds(15));
     }
+
+    glDeleteFramebuffers(1, &(fbo.ID));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
