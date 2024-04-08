@@ -223,7 +223,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	string modelPath = "sampleModels/bunnyteatime.glb";
+	string modelPath = "sampleModels/sphere.obj";
 	// Creating importer and grabbing command line
 	Assimp::Importer importer;
 	if (argc >= 2) {
@@ -277,9 +277,9 @@ int main(int argc, char **argv) {
 
 		// Draw object
 		//drawMesh(mgl);
-		for (int i = 0; i < meshGLVector.size(); i++) {
+		//for (int i = 0; i < meshGLVector.size(); i++) {
 			renderScene(meshGLVector, scene->mRootNode, glm::mat4(1.0), modelMatLoc, 0);
-		}
+		//}
 
 		// Swap buffers and poll for window events		
 		glfwSwapBuffers(window);
