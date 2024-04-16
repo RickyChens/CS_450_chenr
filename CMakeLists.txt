@@ -69,6 +69,7 @@ target_link_libraries(ProfExercises ${ALL_LIBRARIES})
 install(TARGETS ProfExercises RUNTIME DESTINATION bin/ProfExercises)
 install(DIRECTORY shaders/ProfExercises DESTINATION bin/ProfExercises/shaders)
 
+<<<<<<< HEAD
 # Excercises3
 # add_executable(Exercises03 ${GENERAL_SOURCES} "./src/app/Exercises03.cpp")
 # target_link_libraries(Exercises03 ${ALL_LIBRARIES})
@@ -104,3 +105,18 @@ add_executable(Assign05 ${GENERAL_SOURCES} "./src/app/Assign05.cpp")
 target_link_libraries(Assign05 ${ALL_LIBRARIES})
 install(TARGETS Assign05 RUNTIME DESTINATION bin/Assign05)
 install(DIRECTORY shaders/Assign05 DESTINATION bin/Assign05/shaders)
+=======
+# ProfFBOExercises
+add_executable(ProfFBOExercises ${GENERAL_SOURCES} "./src/app/ProfFBOExercises.cpp")
+target_link_libraries(ProfFBOExercises ${ALL_LIBRARIES})
+install(TARGETS ProfFBOExercises RUNTIME DESTINATION bin/ProfFBOExercises)
+install(DIRECTORY shaders/ProfFBOExercises DESTINATION bin/ProfFBOExercises/shaders)
+
+# ProfDeferredExercise
+add_executable(ProfDeferredExercise ${GENERAL_SOURCES} "./src/app/ProfDeferredExercise.cpp")
+target_link_libraries(ProfDeferredExercise ${ALL_LIBRARIES})
+install(TARGETS ProfDeferredExercise RUNTIME DESTINATION bin/ProfDeferredExercise)
+install(DIRECTORY shaders/ProfDeferredExercise DESTINATION bin/ProfDeferredExercise/shaders)
+
+
+>>>>>>> 6137b7f250e69d773230e0a2171d6cbddc72c743
