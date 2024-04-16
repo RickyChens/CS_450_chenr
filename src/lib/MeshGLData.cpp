@@ -37,7 +37,8 @@ void createMeshGL(Mesh &m, MeshGL &mgl) {
                             (void*)offsetof(Vertex, texcoord));
     glVertexAttribPointer(4, 3, GL_FLOAT, false, sizeof(Vertex), 
                             (void*)offsetof(Vertex, tangent));
-
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+							(void*)offsetof(Vertex, normal));
 
 	// Create Element Buffer Object (EBO)
 	glGenBuffers(1, &(mgl.EBO));
