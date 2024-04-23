@@ -20,9 +20,6 @@ void createMeshGL(Mesh &m, MeshGL &mgl) {
 	glEnableVertexAttribArray(2);
 	glEnableVertexAttribArray(3);
 	glEnableVertexAttribArray(4);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
 	
 	// Bind the VBO and set up data mappings so that VAO knows how to read it
 	// 0 = pos (3 elements)
