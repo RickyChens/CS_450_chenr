@@ -147,7 +147,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			light.color = glm::vec4(0.0, 0.0, 1.0, 1.0);
 		}
 		else if (key == GLFW_KEY_V) {
-			if (metallic > 0.0) {
+			if (metallic > 0.1) {
 				metallic -= 0.1;
 				printf("Metallic: %f\n", metallic);
 			}

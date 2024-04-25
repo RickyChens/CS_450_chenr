@@ -32,7 +32,7 @@ vec3 getFresnel(vec3 F0, vec3 L, vec3 H) {
 
 float getNDF(vec3 H, vec3 N, float roughness) {
 	float a = pow(roughness, 2);
-	return pow(a, 2) / (PI * pow(pow(dot(N, H), 2) * pow(a, 2) + 1, 2));
+	return pow(a, 2) / (PI * pow(pow(dot(N, H), 2) * (pow(a, 2) - 1) + 1, 2));
 }
 
 float getSchlickGeo(vec3 B, vec3 N, float roughness) {
