@@ -30,7 +30,7 @@ void main()
 	vec3 diffColor = vec3(diffCoefficient * vertexColor * light.color);
     vec3 V = normalize(-vec3(interPos));
 
-    vec3 specularColor = calculateSpecular(N, L, V, shininess, vec3(1.0));
+    vec3 specularColor = vec3(light.color)*diffCoefficient*calculateSpecular(N, L, V, shininess, vec3(1.0));
 
     out_color = vec4(diffColor + specularColor, 1.0);
 }
