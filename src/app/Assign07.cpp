@@ -147,28 +147,33 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			light.color = glm::vec4(0.0, 0.0, 1.0, 1.0);
 		}
 		else if (key == GLFW_KEY_V) {
-			if (metallic > 0.1) {
+			//if (metallic > 0.1) {
 				metallic -= 0.1;
+				metallic = max(0.0f, min(1.0f, metallic));
 				printf("Metallic: %f\n", metallic);
-			}
+			//}
+
 		}
 		else if (key == GLFW_KEY_B) {
-			if (metallic < 1.0) {
+			//if (metallic < 1.0) {
 				metallic += 0.1;
+				metallic = max(0.0f, min(1.0f, metallic));
 				printf("Metallic: %f\n", metallic);
-			}
+			//}
 		}
 		else if (key == GLFW_KEY_N) {
-			if (roughness > 0.1) {
+			//if (roughness > 0.1) {
 				roughness -= 0.1;
+				roughness = max(0.1f, min(0.7f, roughness));
 				printf("Roughness: %f\n", roughness);
-			}
+			//}
 		}
 		else if (key == GLFW_KEY_M) {
-			if (roughness < 0.7) {
+			//if (roughness < 0.7) {
 				roughness += 0.1;
+				roughness = max(0.1f, min(0.7f, roughness));
 				printf("Roughness: %f\n", roughness);
-			}
+			//}
 		}
     }
 }
